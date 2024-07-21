@@ -13,12 +13,14 @@ class User(db.Model):
     status = db.Column(db.String, default="offline")
 
     servers = db.relationship("Server", back_populates="user", cascade="all, delete")
+    server_members = db.relationship("ServerMember", back_populates="user", cascade="all, delete")
 
 class UserSchema(ma.Schema):
     servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
+    server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["user"]))
     
     class Meta:
-        fields = ("id", "username", "email", "password", "name", "status")
+        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members")
 
 user_schema = UserSchema(exclude=["password"])
 users_schema = UserSchema(exclude=["password"], many=True)
