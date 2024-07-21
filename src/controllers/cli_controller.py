@@ -5,6 +5,7 @@ from flask import Blueprint
 from main import db, bcrypt
 from models.user import User
 from models.server import Server
+from models.servermember import ServerMember
 
 db_commands = Blueprint("db", __name__)
 
@@ -58,6 +59,39 @@ def seed_table():
     ]
 
     db.session.add_all(servers)
+
+    server_members = [
+        ServerMember(
+            joined_on = date.today(),
+            is_admin = True,
+            server = servers[0],
+            user = users[0]
+        ),
+        ServerMember(
+            joined_on = date.today(),
+            server = servers[0],
+            user = users[1]
+        ),
+        ServerMember(
+            joined_on = date.today(),
+            is_admin = True,
+            server = servers[1],
+            user = users[0]
+        ),
+        ServerMember(
+            joined_on = date.today(),
+            is_admin = True,
+            server = servers[2],
+            user = users[1]
+        ),
+        ServerMember(
+            joined_on = date.today(),
+            server = servers[2],
+            user = users[0]
+        )
+    ]
+
+    db.session.add_all(server_members)
 
     db.session.commit()
     print("tables seeded")
