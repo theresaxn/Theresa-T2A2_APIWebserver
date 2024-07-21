@@ -1,3 +1,5 @@
+from marshmallow import fields
+
 from main import db, ma
 
 # create users table in database
@@ -10,7 +12,11 @@ class User(db.Model):
     name = db.Column(db.String)
     status = db.Column(db.String, default="offline")
 
+    servers = db.relationship("Server", back_populates="user", cascade="all, delete")
+
 class UserSchema(ma.Schema):
+    servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
+    
     class Meta:
         fields = ("id", "username", "email", "password", "name", "status")
 
