@@ -7,7 +7,7 @@ class ServerMember(db.Model):
     __tablename__ = "server_members"
     id = db.Column(db.Integer, primary_key=True)
     joined_on = db.Column(db.Date)
-    is_admin = db.Column(db.Boolean)
+    is_admin = db.Column(db.Boolean, default=False)
     
     server_id = db.Column(db.Integer, db.ForeignKey("servers.id"), nullable=False)
     server = db.relationship("Server", back_populates="server_members")
