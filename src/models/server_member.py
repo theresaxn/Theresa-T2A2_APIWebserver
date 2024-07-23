@@ -21,3 +21,6 @@ class ServerMemberSchema(ma.Schema):
 
     class Meta:
         fields = ("id", "joined_on", "is_admin", "server", "user")
+    
+server_member_schema = ServerMemberSchema()
+server_members_schema = ServerMemberSchema(many=True)
