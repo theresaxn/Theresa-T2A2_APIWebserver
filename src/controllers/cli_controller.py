@@ -5,7 +5,8 @@ from flask import Blueprint
 from main import db, bcrypt
 from models.user import User
 from models.server import Server
-from models.servermember import ServerMember
+from models.server_member import ServerMember
+from models.channel import Channel
 
 db_commands = Blueprint("db", __name__)
 
@@ -92,6 +93,29 @@ def seed_table():
     ]
 
     db.session.add_all(server_members)
+
+    channels = [
+        Channel(
+            channel_name = "channel 1",
+            created_on = date.today(),
+            user = users[0],
+            server = servers[0]   
+        ), 
+        Channel(
+            channel_name = "channel 2",
+            created_on = date.today(),
+            user = users[0],
+            server = servers[1]   
+        ), 
+        Channel(
+            channel_name = "channel 3",
+            created_on = date.today(),
+            user = users[1],
+            server = servers[2]   
+        )
+    ]
+
+    db.session.add_all(channels)
 
     db.session.commit()
     print("tables seeded")
