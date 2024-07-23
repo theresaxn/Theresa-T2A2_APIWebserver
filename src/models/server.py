@@ -13,13 +13,15 @@ class Server(db.Model):
     user = db.relationship("User", back_populates="servers")
 
     server_members = db.relationship("ServerMember", back_populates="server", cascade="all, delete")
+    channels = db.relationship("Channel", back_populates="server", cascade="add, delete")
 
 class ServerSchema(ma.Schema):
-    user = fields.Nested("UserSchema", only=["id", "username"])
-    server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["user"]))
+    user = fields.Nested("UserSchema", only=["id", "username", "name", "status"])
+    server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["server"]))
+    channels = fields.List(fields.Nested("ChannelSchema", exclude=["server"]))
 
     class Meta:
-        fields = ("id", "server_name", "created_on", "user", "server_members")
+        fields = ("id", "server_name", "created_on", "user", "server_members", "channels")
 
 server_schema = ServerSchema()
 servers_schema = ServerSchema(many=True)
