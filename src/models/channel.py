@@ -14,12 +14,15 @@ class Channel(db.Model):
     server_id = db.Column(db.Integer, db.ForeignKey("servers.id", nullable=False))
     server = db.relationship("Server", back_populates="channels")
 
+    messages = db.relationship("Message", back_populates="channel", cascade="all, delete")
+
 class ChannelSchema(ma.Schema):
     user = fields.Nested("UserSchema", only=["id", "username", "name", "status"])
     server = fields.Nested("ServerSchema", exclude=["channels"])
+    messages = fields.List(fields.Nested("MessageSchema", exclude=["channel"]))
 
     class Meta:
-        fields = ("id", "channel_name", "created_on", "user", "server")
+        fields = ("id", "channel_name", "created_on", "user", "server", "messages")
 
 channel_schema = ChannelSchema()
 channels_schema = ChannelSchema(many=True)

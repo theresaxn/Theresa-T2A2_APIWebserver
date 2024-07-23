@@ -14,9 +14,10 @@ class User(db.Model):
 
     servers = db.relationship("Server", back_populates="user", cascade="all, delete")
     server_members = db.relationship("ServerMember", back_populates="user", cascade="all, delete")
-    channels = db.relationship("Channel", back_populates="user", cascade="all,delete")
+    channels = db.relationship("Channel", back_populates="user", cascade="all, delete")
     friends_sender = db.relationship("FriendRequest", back_populates="sender_user", cascade="all, delete")
     friends_receiver = db.relationship("FriendRequest", back_populates="receiver_user", cascade="all, delete")
+    messages = db.relationship("Message", back_populates="user", cascade="all, delete")
 
 class UserSchema(ma.Schema):
     servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
@@ -24,9 +25,10 @@ class UserSchema(ma.Schema):
     channels = fields.List(fields.Nested("ChannelSchema", exclude=["user"]))
     friends_sender = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
     friends_receiver = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
+    messages = fields.List(fields.Nested("MessageSchema", exclude=["user"]))
     
     class Meta:
-        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members", "channels")
+        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members", "channels", "friends_sender", "friends_reciever", "messages")
 
 user_schema = UserSchema(exclude=["password"])
 users_schema = UserSchema(exclude=["password"], many=True)
