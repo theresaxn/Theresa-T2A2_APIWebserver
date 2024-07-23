@@ -17,7 +17,7 @@ class ServerMember(db.Model):
 
 class ServerMemberSchema(ma.Schema):
     server = fields.Nested("ServerSchema", exclude=["server_members"])
-    user = fields.Nested("UserSchema", only=["id", "username"])
+    user = fields.Nested("UserSchema", only=["id", "username", "name", "status"])
 
     class Meta:
         fields = ("id", "joined_on", "is_admin", "server", "user")
