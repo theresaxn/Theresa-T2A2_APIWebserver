@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 
 from flask import Blueprint
@@ -7,6 +8,8 @@ from models.user import User
 from models.server import Server
 from models.server_member import ServerMember
 from models.channel import Channel
+from models.friend_request import FriendRequest
+from models.message import Message
 
 db_commands = Blueprint("db", __name__)
 
@@ -116,6 +119,32 @@ def seed_table():
     ]
 
     db.session.add_all(channels)
+
+    friend_requests = [
+        FriendRequest(
+            is_accepted = True,
+            sender_user = users[0],
+            receiver_user = users[1]
+        )
+    ]
+
+    db.session.add_all(friend_requests)
+
+    messages = [
+        Message(
+            content = "message 1",
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            user = users[0]
+        ),
+        Message(
+            content = "message 2",
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            channel = channels[0],
+            user = users[1]
+        )
+    ]
+
+    db.session.add_all(messages)
 
     db.session.commit()
     print("tables seeded")

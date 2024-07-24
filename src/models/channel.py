@@ -8,10 +8,10 @@ class Channel(db.Model):
     channel_name = db.Column(db.String, nullable=False)
     created_on = db.Column(db.Date)
 
-    creator_user_id = db.Column(db.Integer, db.ForeignKey("users.id", nullable=False))
+    creator_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user = db.relationship("User", back_populates ="channels")
 
-    server_id = db.Column(db.Integer, db.ForeignKey("servers.id", nullable=False))
+    server_id = db.Column(db.Integer, db.ForeignKey("servers.id"), nullable=False)
     server = db.relationship("Server", back_populates="channels")
 
     messages = db.relationship("Message", back_populates="channel", cascade="all, delete")

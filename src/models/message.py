@@ -9,7 +9,7 @@ class Message(db.Model):
     timestamp = db.Column(db.Date)
     
     channel_id = db.Column(db.Integer, db.ForeignKey("channels.id"), nullable=True)
-    channel = db.relationship("Server", back_populates="messages")
+    channel = db.relationship("Channel", back_populates="messages")
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user = db.relationship("User", back_populates="messages")

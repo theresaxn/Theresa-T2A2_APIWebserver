@@ -15,8 +15,8 @@ class User(db.Model):
     servers = db.relationship("Server", back_populates="user", cascade="all, delete")
     server_members = db.relationship("ServerMember", back_populates="user", cascade="all, delete")
     channels = db.relationship("Channel", back_populates="user", cascade="all, delete")
-    friends_sender = db.relationship("FriendRequest", back_populates="sender_user", cascade="all, delete")
-    friends_receiver = db.relationship("FriendRequest", back_populates="receiver_user", cascade="all, delete")
+    friends_sender = db.relationship("FriendRequest", back_populates="sender_user", foreign_keys="[FriendRequest.sender_user_id]", cascade="all, delete")
+    friends_receiver = db.relationship("FriendRequest", back_populates="receiver_user", foreign_keys="[FriendRequest.receiver_user_id]", cascade="all, delete")
     messages = db.relationship("Message", back_populates="user", cascade="all, delete")
 
 class UserSchema(ma.Schema):
