@@ -5,7 +5,7 @@ from main import db, ma
 # create users table in database
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
@@ -28,13 +28,13 @@ class UserSchema(ma.Schema):
     servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
     server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["user"]))
     channels = fields.List(fields.Nested("ChannelSchema", exclude=["user"]))
-    friends_sender = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
-    friends_receiver = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
-    messages_sender = fields.List(fields.Nested("MessageSchema", exclude=["user"]))
-    messages_receiver = fields.List(fields.Nested("MessageSchema", exclude=["user"]))
+    friends_sender = fields.List(fields.Nested("FriendRequestSchema", exclude=["sender_user"]))
+    friends_receiver = fields.List(fields.Nested("FriendRequestSchema", exclude=["receiver_user"]))
+    messages_sender = fields.List(fields.Nested("MessageSchema", exclude=["sender_user"]))
+    messages_receiver = fields.List(fields.Nested("MessageSchema", exclude=["receiver_user"]))
 
     class Meta:
-        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members", "channels", "friends_sender", "friends_receiver", "messages")
+        fields = ("user_id", "username", "email", "password", "name", "status", "servers", "server_members", "channels", "friends_sender", "friends_receiver", "messages")
 
 user_schema = UserSchema(exclude=["password"])
 users_schema = UserSchema(exclude=["password"], many=True)
