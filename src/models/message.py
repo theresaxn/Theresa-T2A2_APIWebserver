@@ -12,10 +12,12 @@ class Message(db.Model):
     channel = db.relationship("Channel", back_populates="messages")
 
     sender_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    sender_user = db.relationship("User", foreign_keys=[sender_user_id], back_populates="messages_sender")
+    sender_user = db.relationship("User",foreign_keys=[sender_user_id],
+                                  back_populates="messages_sender")
 
     receiver_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    receiver_user = db.relationship("User", foreign_keys=[receiver_user_id], back_populates="messages_receiver")
+    receiver_user = db.relationship("User", foreign_keys=[receiver_user_id],
+                                    back_populates="messages_receiver")
 
 class MessageSchema(ma.Schema):
     channel = fields.Nested("ChannelSchema", exclude=["messages"])
