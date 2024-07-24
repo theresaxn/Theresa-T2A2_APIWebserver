@@ -26,9 +26,9 @@ class UserSchema(ma.Schema):
     friends_sender = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
     friends_receiver = fields.List(fields.Nested("FriendRequestSchema", exclude=["user"]))
     messages = fields.List(fields.Nested("MessageSchema", exclude=["user"]))
-    
+
     class Meta:
-        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members", "channels", "friends_sender", "friends_reciever", "messages")
+        fields = ("id", "username", "email", "password", "name", "status", "servers", "server_members", "channels", "friends_sender", "friends_receiver", "messages")
 
 user_schema = UserSchema(exclude=["password"])
 users_schema = UserSchema(exclude=["password"], many=True)
