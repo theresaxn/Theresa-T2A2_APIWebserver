@@ -71,4 +71,4 @@ def delete_server(server_id):
         db.session.commit()
         return {"message": f"server with id {server_id} has been deleted"}
     else:
-        return {"error": f"server with id {server_id} not found"}
+        return {"error": f"server with id {server_id} not found"}, 404
