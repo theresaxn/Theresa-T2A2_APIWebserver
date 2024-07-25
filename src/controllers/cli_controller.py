@@ -133,13 +133,13 @@ def seed_table():
     messages = [
         Message(
             content = "message 1",
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M%S"),
             sender_user = users[0],
             receiver_user = users[1]
         ),
         Message(
             content = "message 2",
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M%S"),
             channel = channels[0],
             sender_user = users[1]
         )
