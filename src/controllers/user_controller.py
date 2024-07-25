@@ -6,9 +6,10 @@ from models.user import User, UserSchema, user_schema, users_schema
 
 user_bp = Blueprint("user", __name__, url_prefix="/user")
 
-@user_bp.route("/", methods=["PUT", "PATCH"])
+# Update account - PUT, PATCH - user/updateaccount
+@user_bp.route("/updateaccount", methods=["PUT", "PATCH"])
 @jwt_required()
-def update_user():
+def update_account():
     body_data = UserSchema().load(request.get_json(), partial=True)
     password = body_data.get("password")
     stmt = db.select(User).filter_by(user_id=get_jwt_identity())
@@ -24,7 +25,8 @@ def update_user():
     else:
         return {"error": "user not found"}, 404
 
-@user_bp.route("/", methods=["DELETE"])
+# Delete account - DELETE - user/deleteaccount
+@user_bp.route("/deleteaccount", methods=["DELETE"])
 @jwt_required()
 def delete_user():
     stmt = db.select(User).filter_by(user_id=get_jwt_identity())
