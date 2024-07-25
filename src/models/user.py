@@ -1,6 +1,13 @@
-from marshmallow import fields
+from marshmallow import fields, ValidationError
+from marshmallow.validate import Regexp
 
 from main import db, ma
+
+VALID_STATUSES = ("online", "offline", "away")
+
+def validate_status(status):
+    if status.lower() not in VALID_STATUSES:
+        raise ValidationError(f"must be one of: online, offline, away")
 
 # create users table in database
 class User(db.Model):
@@ -41,9 +48,13 @@ class UserSchema(ma.Schema):
     messages_sender = fields.List(fields.Nested("MessageSchema", exclude=["sender_user"]))
     messages_receiver = fields.List(fields.Nested("MessageSchema", exclude=["receiver_user"]))
 
+    password = fields.String(validate=Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+                                             error= "needs to be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character"))
+    status = fields.String(validate=validate_status)
+
     class Meta:
         fields = ("user_id", "username", "email", "password", "name", "status", "servers", "server_members",
                   "channels", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver")
 
-user_schema = UserSchema(exclude=["password"])
-users_schema = UserSchema(exclude=["password"], many=True)
+user_schema = UserSchema(exclude=["password", "server_members", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver"])
+users_schema = UserSchema(exclude=["password", "server_members", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver"], many=True)
