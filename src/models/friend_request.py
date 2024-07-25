@@ -8,11 +8,13 @@ class FriendRequest(db.Model):
     is_accepted = db.Column(db.Boolean, default=False)
     
     sender_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    sender_user = db.relationship("User", foreign_keys=[sender_user_id],
+    sender_user = db.relationship("User",
+                                  foreign_keys=[sender_user_id],
                                   back_populates="friends_sender")
 
     receiver_user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
-    receiver_user = db.relationship("User", foreign_keys=[receiver_user_id],
+    receiver_user = db.relationship("User",
+                                    foreign_keys=[receiver_user_id],
                                     back_populates="friends_receiver")
 
 class FriendRequestSchema(ma.Schema):
