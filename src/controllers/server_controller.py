@@ -71,6 +71,6 @@ def delete_server(server_id):
             return {"error": "user not authorised to perform action"}, 403
         db.session.delete(server)
         db.session.commit()
-        return {"message": f"server with id {server_id} has been deleted"}
+        return {"message": f"server {server.server_name} has been deleted"}
     else:
         return {"error": f"server with id {server_id} not found"}, 404

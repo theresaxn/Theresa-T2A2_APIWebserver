@@ -34,7 +34,6 @@ def delete_user():
     if user:
         db.session.delete(user)
         db.session.commit()
-        return {"message": f"{user.username} has been deleted"}
+        return {"message": f"user {user.username} has been deleted"}
     else:
         return {"error": "user not found"}, 404
-    
