@@ -6,8 +6,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main import db
 from models.user import User
 from models.server import Server, server_schema, servers_schema
+from controllers.server_member_controller import member_bp
 
 server_bp = Blueprint("server", __name__, url_prefix="/server")
+server_bp.register_blueprint(member_bp)
 
 # View all servers - GET - server/all/user/<int:user_id>
 @server_bp.route("/all/user/<int:user_id>")
@@ -16,7 +18,10 @@ def view_all_servers(user_id):
     user = User.query.get(user_id)
     if not user:
         return {"error": f"user with id {user_id} not found"}, 404
-    servers = Server.query.filter_by(creator_user_id=user_id)
+    servers_stmt = db.select(Server).filter_by(creator_user_id=user.user_id)
+    servers = db.session.scalar(servers_stmt)
+    if not servers:
+        return {"error": f"no servers created by user with id {user_id}"}, 404
     return servers_schema.dump(servers)
 
 # View one server - GET - server/<int:server_id>
