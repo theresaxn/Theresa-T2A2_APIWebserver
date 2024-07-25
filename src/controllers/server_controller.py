@@ -13,7 +13,7 @@ server_bp = Blueprint("server", __name__, url_prefix="/server")
 @server_bp.route("/all/user/<int:user_id>")
 @jwt_required()
 def view_all_servers(user_id):
-    user = User.query.filter_by(user_id=user_id)
+    user = User.query.get(user_id)
     if not user:
         return {"error": f"user with id {user_id} not found"}, 404
     servers = Server.query.filter_by(creator_user_id=user_id)
