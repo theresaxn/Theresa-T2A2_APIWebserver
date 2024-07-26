@@ -41,7 +41,7 @@ class User(db.Model):
                                         cascade="all, delete")
 
 class UserSchema(ma.Schema):
-    servers = fields.List(fields.Nested("ServerSchema", only=["server_id", "server_name"]))
+    servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
     server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["user"]))
     channels = fields.List(fields.Nested("ChannelSchema", exclude=["user"]))
     friend_user1 = fields.List(fields.Nested("FriendSchema", exclude=["user1"]))
@@ -57,5 +57,5 @@ class UserSchema(ma.Schema):
         fields = ("user_id", "username", "email", "password", "name", "status", "servers", "server_members",
                   "channels", "friend_user1", "friend_user2","messages_sender", "messages_receiver")
 
-user_schema = UserSchema(exclude=["password"])
-users_schema = UserSchema(exclude=["password"], many=True)
+user_schema = UserSchema(only=["user_id", "username", "email", "name", "status", "servers"])
+users_schema = UserSchema(exclude=["user_id", "username", "email", "name", "status", "servers"], many=True)
