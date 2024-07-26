@@ -46,7 +46,7 @@ def create_server():
 
     new_member = ServerMember(
         joined_on = date.today(),
-        server = new_server,
+        server_id = new_server.server_id,
         user_id = get_jwt_identity(),
         is_admin = True
     )
