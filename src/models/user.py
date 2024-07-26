@@ -8,7 +8,7 @@ VALID_STATUSES = ("online", "offline", "away")
 def validate_status(status):
     if status.lower() not in VALID_STATUSES:
         raise ValidationError(f"must be one of: online, offline, away")
-
+    
 # create users table in database
 class User(db.Model):
     __tablename__ = "users"
@@ -22,13 +22,14 @@ class User(db.Model):
     servers = db.relationship("Server", back_populates="user", cascade="all, delete")
     server_members = db.relationship("ServerMember", back_populates="user", cascade="all, delete")
     channels = db.relationship("Channel", back_populates="user", cascade="all, delete")
-    friends_sender = db.relationship("FriendRequest",
-                                     foreign_keys="[FriendRequest.sender_user_id]",
-                                     back_populates="sender_user",
+
+    friend_user1 = db.relationship("Friend",
+                                     foreign_keys="[Friend.user1_id]",
+                                     back_populates="user1",
                                      cascade="all, delete")
-    friends_receiver = db.relationship("FriendRequest",
-                                       foreign_keys="[FriendRequest.receiver_user_id]",
-                                       back_populates="receiver_user",
+    friend_user2 = db.relationship("Friend",
+                                       foreign_keys="[Friend.user2_id]",
+                                       back_populates="user2",
                                        cascade="all, delete")
     messages_sender = db.relationship("Message",
                                       foreign_keys="[Message.sender_user_id]",
@@ -40,11 +41,11 @@ class User(db.Model):
                                         cascade="all, delete")
 
 class UserSchema(ma.Schema):
-    servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
+    servers = fields.List(fields.Nested("ServerSchema", only=["server_id", "server_name"]))
     server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["user"]))
     channels = fields.List(fields.Nested("ChannelSchema", exclude=["user"]))
-    friends_sender = fields.List(fields.Nested("FriendRequestSchema", exclude=["sender_user"]))
-    friends_receiver = fields.List(fields.Nested("FriendRequestSchema", exclude=["receiver_user"]))
+    friend_user1 = fields.List(fields.Nested("FriendSchema", exclude=["user1"]))
+    friend_user2 = fields.List(fields.Nested("FriendSchema", exclude=["user2"]))
     messages_sender = fields.List(fields.Nested("MessageSchema", exclude=["sender_user"]))
     messages_receiver = fields.List(fields.Nested("MessageSchema", exclude=["receiver_user"]))
 
@@ -54,7 +55,7 @@ class UserSchema(ma.Schema):
 
     class Meta:
         fields = ("user_id", "username", "email", "password", "name", "status", "servers", "server_members",
-                  "channels", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver")
+                  "channels", "friend_user1", "friend_user2","messages_sender", "messages_receiver")
 
-user_schema = UserSchema(exclude=["password", "server_members", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver"])
-users_schema = UserSchema(exclude=["password", "server_members", "friends_sender", "friends_receiver", "messages_sender", "messages_receiver"], many=True)
+user_schema = UserSchema(exclude=["password"])
+users_schema = UserSchema(exclude=["password"], many=True)
