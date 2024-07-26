@@ -1,18 +1,14 @@
-import functools
-
 from flask_jwt_extended import get_jwt_identity
 
 from main import db
-from models.user import User
+from models.server import Server
+from models.server_member import ServerMember
 
-def auth_as_admin(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        user_id = get_jwt_identity()
-        stmt = db.select(User).filter_by(user_id=user_id)
-        user = db.session.scalar(stmt)
-        if user.is_admin:
-            return fn(*args, **kwargs)
-        else:
-            return {"error": "user not authorised to perform this action"}, 403
-    return wrapper
+# Check if user is an existing member in a server
+def existing_member(server_id):
+    server_stmt = db.select(Server).filter_by(server_id=server_id)
+    server = db.session.scalar(server_stmt)
+    member_stmt = db.select(ServerMember).filter_by(server=server, user_id=get_jwt_identity())
+    server_member = db.session.scalar(member_stmt)
+    return server_member
+
