@@ -18,8 +18,8 @@ class Server(db.Model):
 
 class ServerSchema(ma.Schema):
     user = fields.Nested("UserSchema", only=["user_id", "username"])
-    server_members = fields.List(fields.Nested("ServerMemberSchema", only=["member_id", "user"]))
-    channels = fields.List(fields.Nested("ChannelSchema", only=["channel_id", "channel_name"]))
+    server_members = fields.List(fields.Nested("ServerMemberSchema", exclude=["server"]))
+    channels = fields.List(fields.Nested("ChannelSchema", exclude=["server", "user", "messages"]))
 
     server_name = fields.String(validate=Length(min=5, error="must be at least 5 characters long"))
 

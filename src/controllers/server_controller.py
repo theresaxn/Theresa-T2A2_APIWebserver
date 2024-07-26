@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main import db
 from models.user import User
 from models.server import Server, server_schema, servers_schema
+from models.server_member import ServerMember
 from controllers.server_member_controller import member_bp
 
 server_bp = Blueprint("server", __name__, url_prefix="/server")
@@ -35,14 +36,24 @@ def view_one_server(server_id):
 @jwt_required()
 def create_server():
     body_data = server_schema.load(request.get_json())
-    server = Server(
+    new_server = Server(
         server_name = body_data.get("server_name"),
         created_on = date.today(),
         creator_user_id = get_jwt_identity()
     )
-    db.session.add(server)
+    db.session.add(new_server)
     db.session.commit()
-    return server_schema.dump(server)
+
+    new_member = ServerMember(
+        joined_on = date.today(),
+        server = new_server,
+        user_id = get_jwt_identity(),
+        is_admin = True
+    )
+
+    db.session.add(new_member)
+    db.session.commit()
+    return server_schema.dump(new_server)
 
 # Update server - PATCH, PUT - server/update/<int:server_id>
 @server_bp.route("/update/<int:server_id>", methods=["PUT", "PATCH"])
