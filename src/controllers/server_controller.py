@@ -4,7 +4,6 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from main import db
-from utils import existing_member
 from models.user import User
 from models.server import Server, server_schema, servers_schema
 from models.server_member import ServerMember
@@ -64,10 +63,7 @@ def update_server(server_id):
     stmt = db.select(Server).filter_by(server_id=server_id)
     server = db.session.scalar(stmt)
     if server:
-        server_member = existing_member(server_id)
-        if not server_member:
-            return {"error": f"user not a member of server {server.server_name}"}, 400
-        if not server_member.is_admin:
+        if str(server.creator_user_id) != get_jwt_identity():
             return {"error": "user not authorised to perform this action"}, 403
         server.server_name = body_data.get("server_name") or server.server_name
         db.session.commit()
