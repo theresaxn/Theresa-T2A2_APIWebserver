@@ -29,8 +29,7 @@ def update_account():
 @user_bp.route("/deleteaccount", methods=["DELETE"])
 @jwt_required()
 def delete_user():
-    stmt = db.select(User).filter_by(user_id=get_jwt_identity())
-    user = db.session.scalar(stmt)
+    user = User.query.get(get_jwt_identity())
     if user:
         db.session.delete(user)
         db.session.commit()
