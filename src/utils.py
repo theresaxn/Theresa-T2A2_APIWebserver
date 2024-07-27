@@ -2,8 +2,6 @@ import functools
 
 from flask_jwt_extended import get_jwt_identity
 
-from main import db
-from models.user import User
 from models.server import Server
 from models.server_member import ServerMember
 from models.channel import Channel
