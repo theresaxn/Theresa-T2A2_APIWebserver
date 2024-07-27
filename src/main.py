@@ -42,4 +42,7 @@ def create_app():
     from controllers.server_member_controller import member_bp
     app.register_blueprint(member_bp)
 
+    from controllers.channel_controller import channel_bp
+    app.register_blueprint(channel_bp)
+
     return app
