@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main import db
 from utils import current_member_check, message_exist, channel_message_exist
 from models.user import User
-from models.channel import Channel
 from models.message import Message, message_schema, messages_schema
 
 message_bp = Blueprint("message", __name__, url_prefix="/message")
