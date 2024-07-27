@@ -2,12 +2,6 @@ from marshmallow import fields, ValidationError
 from marshmallow.validate import Regexp
 
 from main import db, ma
-
-VALID_STATUSES = ("online", "offline", "away")
-
-def validate_status(status):
-    if status.lower() not in VALID_STATUSES:
-        raise ValidationError(f"must be one of: online, offline, away")
     
 # create users table in database
 class User(db.Model):
@@ -31,6 +25,12 @@ class User(db.Model):
                                         foreign_keys="[Message.receiver_user_id]",
                                         back_populates="receiver_user",
                                         cascade="all, delete")
+
+VALID_STATUSES = ("online", "offline", "away")
+
+def validate_status(status):
+    if status.lower() not in VALID_STATUSES:
+        raise ValidationError(f"must be one of: online, offline, away")
 
 class UserSchema(ma.Schema):
     servers = fields.List(fields.Nested("ServerSchema", exclude=["user"]))
