@@ -10,7 +10,7 @@ from models.user import User, UserSchema, user_schema
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-# Register - POST - auth/register
+# Register new user - POST method - route: /auth/register
 @auth_bp.route("/register", methods=["POST"])
 def register_user():
     try:
@@ -40,7 +40,7 @@ def register_user():
                 column_name = "unknown"
             return {"error": f"{column_name} already in use"}, 409
 
-# Login - POST - auth/login
+# Login user - POST method - route: /auth/login
 @auth_bp.route("/login", methods=["POST"])
 def login_user():
     body_data = request.get_json()

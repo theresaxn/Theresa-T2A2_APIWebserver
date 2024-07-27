@@ -8,7 +8,7 @@ from models.user import User, UserSchema, user_schema
 
 user_bp = Blueprint("user", __name__, url_prefix="/user")
 
-# Update account - PUT, PATCH - user/updateaccount
+# Update account - PUT, PATCH - route: /user/updateaccount
 @user_bp.route("/updateaccount", methods=["PUT", "PATCH"])
 @jwt_required()
 def update_account():
@@ -37,7 +37,7 @@ def update_account():
                 column_name = "unknown"
             return {"error": f"{column_name} already in use"}, 409
 
-# Delete account - DELETE - user/deleteaccount
+# Delete account - DELETE - route: /user/deleteaccount
 @user_bp.route("/deleteaccount", methods=["DELETE"])
 @jwt_required()
 def delete_user():

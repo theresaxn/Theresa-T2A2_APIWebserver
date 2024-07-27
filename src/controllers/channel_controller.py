@@ -12,7 +12,7 @@ from models.channel import Channel, channel_schema, channels_schema
 
 channel_bp = Blueprint("channel", __name__, url_prefix="/<int:server_id>/channel")
 
-# View all channels - GET - server/<int:server_id>/channel/all
+# View all channels - GET - route: /server/<int:server_id>/channel/all
 @channel_bp.route("/all")
 @jwt_required()
 @current_member("server_id")
@@ -26,7 +26,7 @@ def view_all_channels(server_id):
     else:
         return channels_schema.dump(channels)
     
-# View one channel - GET - server/<int:server_id>/channel/<int:channel_id>
+# View one channel - GET - route: /server/<int:server_id>/channel/<int:channel_id>
 @channel_bp.route("/<int:channel_id>")
 @jwt_required()
 @channel_exist("server_id", "channel_id")
@@ -35,7 +35,7 @@ def view_one_channel(server_id, channel_id):
     channel = Channel.query.filter_by(server_id=server_id, channel_id=channel_id).first()
     return channel_schema.dump(channel)
     
-# Add channel - POST - server/<int:server_id>/channel/create
+# Add channel - POST - route: /server/<int:server_id>/channel/create
 @channel_bp.route("/create", methods=["POST"])
 @jwt_required()
 @current_member("server_id")
@@ -56,7 +56,7 @@ def create_channel(server_id):
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
-# Update channel - PATCH, PUT - server/<int:server_id>/channel/update/<int:channel_id>
+# Update channel - PATCH, PUT - route: /server/<int:server_id>/channel/update/<int:channel_id>
 @channel_bp.route("/update/<int:channel_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 @channel_exist("server_id", "channel_id")
@@ -69,7 +69,7 @@ def update_channel(server_id, channel_id):
     db.session.commit()
     return channel_schema.dump(channel)
 
-# Delete channel - DELETE - server/<int:server_id>/channel/delete/<int:channel_id>
+# Delete channel - DELETE - route: /server/<int:server_id>/channel/delete/<int:channel_id>
 @channel_bp.route("/delete/<int:channel_id>", methods=["DELETE"])
 @jwt_required()
 @channel_exist("server_id", "channel_id")

@@ -11,7 +11,7 @@ from models.server_member import ServerMember, server_member_schema, server_memb
 
 member_bp = Blueprint("member", __name__, url_prefix="/<int:server_id>/member")
 
-# View all members - GET - server/<int:server_id>/member/all
+# View all members - GET - route: /server/<int:server_id>/member/all
 @member_bp.route("/all")
 @jwt_required()
 @current_member("server_id")
@@ -19,7 +19,7 @@ def view_all_members(server_id):
     server_members = ServerMember.query.filter_by(server_id=server_id).all()
     return server_members_schema.dump(server_members)
 
-# View one member - GET - server/<int:server_id>/member/<int:member_id>
+# View one member - GET - route: /server/<int:server_id>/member/<int:member_id>
 @member_bp.route("/<int:member_id>")
 @jwt_required()
 @current_member("server_id")
@@ -28,7 +28,7 @@ def view_one_member(server_id, member_id):
     server_member = ServerMember.query.filter_by(server_id=server_id, member_id=member_id).first()
     return server_member_schema.dump(server_member)
 
-# Join server - POST - server/<int:server_id>/member/join
+# Join server - POST - route: /server/<int:server_id>/member/join
 @member_bp.route("/join", methods=["POST"])
 @jwt_required()
 def join_server(server_id):
@@ -48,7 +48,7 @@ def join_server(server_id):
         db.session.commit()
         return server_member_schema.dump(new_member)
 
-# Add member - POST - server/<int:server_id>/member/add/<int:user_id>
+# Add member - POST - route: /server/<int:server_id>/member/add/<int:user_id>
 @member_bp.route("/add/<int:user_id>", methods=["POST"])
 @jwt_required()
 @current_member("server_id")
@@ -71,7 +71,7 @@ def add_member(server_id, user_id):
         db.session.commit()
     return server_member_schema.dump(new_member)
 
-# Update member - PUT, PATCH - server/<int:server_id>/member/update/<int:member_id>
+# Update member - PUT, PATCH - route: /server/<int:server_id>/member/update/<int:member_id>
 @member_bp.route("/update/<int:member_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 @member_exist("server_id", "member_id")
@@ -86,7 +86,7 @@ def update_member(server_id, member_id):
         server_member.is_admin = body_data.get("is_admin") or server_member.is_admin
         return server_member_schema.dump(server_member)
 
-# Delete member - DELETE - server/<int:server_id>/member/delete/<int:member_id>
+# Delete member - DELETE - route: /server/<int:server_id>/member/delete/<int:member_id>
 @member_bp.route("/delete/<int:member_id>", methods=["DELETE"])
 @jwt_required()
 @member_exist("server_id", "member_id")

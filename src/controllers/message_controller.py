@@ -14,7 +14,7 @@ message_bp = Blueprint("message", __name__, url_prefix="/message")
 message_user_bp = Blueprint("message_user", __name__, url_prefix="/user/message")
 message_channel_bp = Blueprint("message_channel", __name__, url_prefix="/channel/<int:channel_id>/message")
 
-# View all direct messages received - GET - /user/message/all
+# View all direct messages received - GET - route: /user/message/all
 @message_user_bp.route("/all")
 @jwt_required()
 def view_all_direct_messages():
@@ -23,7 +23,7 @@ def view_all_direct_messages():
         return {"message": "no messages sent to user yet"}, 200
     return messages_schema.dump(messages)
 
-# View all channel messages - GET - channel/<int:channel_id>/message/all
+# View all channel messages - GET - route: /channel/<int:channel_id>/message/all
 @message_channel_bp.route("/all")
 @jwt_required()
 @current_member_check("channel_id")
@@ -33,7 +33,7 @@ def view_all_channel_messages(channel_id):
         return {"message": f"no messages posted to {messages.channel.channel_name} yet"}, 200
     return messages_schema.dump(messages)
 
-# View one channel messages - GET - channel/<int:channel_id>/message/<int:message_id>
+# View one channel messages - GET - route: /channel/<int:channel_id>/message/<int:message_id>
 @message_channel_bp.route("/<int:message_id>")
 @jwt_required()
 @current_member_check("channel_id")
@@ -42,7 +42,7 @@ def view_one_channel_message(channel_id, message_id):
     message = Message.query.filter_by(channel_id=channel_id, message_id=message_id).first()
     return message_schema.dump(message)
 
-# Send direct message - POST - user/message/send/<int:user_id>
+# Send direct message - POST - route: /user/message/send/<int:user_id>
 @message_user_bp.route("/send/<int:user_id>", methods=["POST"])
 @jwt_required()
 def send_direct_message(user_id):
@@ -65,7 +65,7 @@ def send_direct_message(user_id):
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
-# Post channel message - POST - channel/<int:channel_id>/message/post
+# Post channel message - POST - route: /channel/<int:channel_id>/message/post
 @message_channel_bp.route("/post", methods=["POST"])
 @jwt_required()
 @current_member_check("channel_id")
@@ -86,7 +86,7 @@ def add_channel_message(channel_id):
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
-# Update message - PUT, PATCH - message/update/<int:message_id>
+# Update message - PUT, PATCH - route: /message/update/<int:message_id>
 @message_bp.route("/update/<int:message_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 @message_exist("message_id")
@@ -103,7 +103,7 @@ def update_message(message_id):
         db.session.commit()
         return message_schema.dump(message)
     
-# Delete message - DELETE - message/update/<int:message_id>
+# Delete message - DELETE - route: /message/update/<int:message_id>
 @message_bp.route("/delete/<int:message_id>", methods=["DELETE"])
 @jwt_required()
 @message_exist("message_id")
