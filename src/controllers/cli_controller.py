@@ -8,7 +8,6 @@ from models.user import User
 from models.server import Server
 from models.server_member import ServerMember
 from models.channel import Channel
-from models.friend import Friend
 from models.message import Message
 
 db_commands = Blueprint("db", __name__)
@@ -120,16 +119,6 @@ def seed_table():
 
     db.session.add_all(channels)
 
-    friends = [
-        Friend(
-            is_accepted = True,
-            user1 = users[0],
-            user2 = users[1]
-        )
-    ]
-
-    db.session.add_all(friends)
-
     messages = [
         Message(
             content = "message 1",
@@ -138,6 +127,7 @@ def seed_table():
             receiver_user = users[1]
         ),
         Message(
+            title = "message title 1",
             content = "message 2",
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             channel = channels[0],
