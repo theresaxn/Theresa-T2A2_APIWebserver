@@ -8,9 +8,11 @@ from models.user import User
 from models.server import Server, server_schema, servers_schema
 from models.server_member import ServerMember
 from controllers.server_member_controller import member_bp
+from controllers.channel_controller import channel_bp
 
 server_bp = Blueprint("server", __name__, url_prefix="/server")
 server_bp.register_blueprint(member_bp)
+server_bp.register_blueprint(channel_bp)
 
 # View all servers - GET - server/all/user/<int:user_id>
 @server_bp.route("/all/user/<int:user_id>")

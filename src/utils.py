@@ -6,24 +6,70 @@ from main import db
 from models.user import User
 from models.server import Server
 from models.server_member import ServerMember
+from models.channel import Channel
 
-def auth_member_action(id_arg_name):
+def current_member(id_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs): 
-            member_id = kwargs.get(id_arg_name)
-            member = ServerMember.query.get(member_id)
-            if not member:
-                return {"error": f"member with id {member_id} not found"}, 404
-            server = Server.query.get(member.server_id)
-            stmt = db.select(ServerMember).filter_by(server=server, user_id=get_jwt_identity())
-            server_member = db.session.scalar(stmt)
+            server_id = kwargs.get(id_arg_name)
+            server = Server.query.get(server_id)
+            if not server:
+                return {"error": f"server with id {server_id} not found"}, 404
+            server_member = ServerMember.query.filter_by(server=server, user_id=get_jwt_identity()).first()
             if not server_member:
-                return {"error": f"user not a member of server {server.server_name}"}, 404
+                return {"error": f"user not a member of server {server.server_name}"}, 400
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def auth_as_admin (id_arg_name):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs): 
+            server_id = kwargs.get(id_arg_name)
+            server = Server.query.get(server_id)
+            server_member = ServerMember.query.filter_by(server=server, user_id=get_jwt_identity()).first()
             if not server_member.is_admin:
                 return {"error": "user not authorised to perform this action"}, 403
-            if member.user.user_id == server.user.user_id:
-                return {"error": f"member {server_member.user.username} cannot be updated or deleted"}, 403
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def member_exist(id1_arg_name, id2_arg_name):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs): 
+            server_id = kwargs.get(id1_arg_name)
+            member_id = kwargs.get(id2_arg_name)
+            server = Server.query.get(server_id)
+            server_member = ServerMember.query.get(member_id)
+            if not server:
+                return {"error": f"server with id {server_id} not found"}, 404
+            if not server_member:
+                return {"error": f"member with id {member_id} not found"}, 404
+            member_filter = ServerMember.query.filter_by(server=server, member_id=member_id).first()
+            if not member_filter:
+                return {"error": f"member with id {member_id} not found in server {server.server_name}"}, 404
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def channel_exist(id1_arg_name, id2_arg_name):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs): 
+            server_id = kwargs.get(id1_arg_name)
+            channel_id = kwargs.get(id2_arg_name)
+            server = Server.query.get(server_id)
+            channel = Channel.query.get(channel_id)
+            if not server:
+                return {"error": f"server with id {server_id} not found"}, 404
+            if not channel:
+                return {"error": f"channel with id {channel_id} not found"}, 404
+            channel_filter = Channel.query.filter_by(server=server, channel_id=channel_id).first()
+            if not channel_filter:
+                return {"error": f"channel with id {channel_id} not found in server {server.server_name}"}, 404
             return fn(*args, **kwargs)
         return wrapper
     return decorator
