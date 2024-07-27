@@ -20,7 +20,7 @@ def view_all_channels(server_id):
         return {"error": f"server with id {server_id} not found"}, 404
     channels = Channel.query.filter_by(server_id=server_id).all()
     if not channels:
-        return {"error": f"channels in {server.server_name} not found"}, 404
+        return {"message": f"no channels created in server {server.server_name} yet"}, 200
     else:
         return channels_schema.dump(channels)
     

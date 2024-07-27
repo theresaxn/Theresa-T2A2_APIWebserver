@@ -23,7 +23,7 @@ def view_all_servers(user_id):
         return {"error": f"user with id {user_id} not found"}, 404
     servers = Server.query.filter_by(creator_user_id=user_id).all()
     if not servers:
-        return {"error": f"servers created by user {user.username} not found"}, 404
+        return {"message": f"no servers created by {user.username}"}, 200
     else:
         return servers_schema.dump(servers)
 
