@@ -5,9 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from main import db
 from utils import current_member, auth_as_admin, channel_exist
-from models.user import User
 from models.server import Server
-from models.server_member import ServerMember
 from models.channel import Channel, channel_schema, channels_schema
 
 channel_bp = Blueprint("channel", __name__, url_prefix="/<int:server_id>/channel")
