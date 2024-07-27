@@ -36,8 +36,7 @@ def join_server(server_id):
     if not server:
         return {"error": f"server with id {server_id} not found"}, 404
     else:
-        stmt = db.select(ServerMember).filter_by(server=server, user_id=get_jwt_identity())
-        server_member = db.session.scalar(stmt)
+        server_member = ServerMember.query.filter_by(server=server, user_id=get_jwt_identity()).first()
         if server_member:
             return {"error": f"user is already a member of server {server.server_name}"}, 400
         new_member = ServerMember(
