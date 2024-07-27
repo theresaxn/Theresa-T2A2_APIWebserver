@@ -58,8 +58,7 @@ def create_channel(server_id):
 @auth_as_admin("server_id")
 def update_channel(server_id, channel_id):
     body_data = channel_schema.load(request.get_json())
-    stmt = db.select(Channel).filter_by(channel_id=channel_id)
-    channel = db.session.scalar(stmt)
+    channel = Channel.query.get(channel_id)
     channel.channel_name = body_data.get("channel_name") or channel.channel_name
     db.session.commit()
     return channel_schema.dump(channel)
@@ -71,8 +70,7 @@ def update_channel(server_id, channel_id):
 @current_member("server_id")
 @auth_as_admin("server_id")
 def delete_channel(server_id, channel_id):
-    stmt = db.select(Channel).filter_by(channel_id=channel_id)
-    channel = db.session.scalar(stmt)
+    channel = Channel.query.get(channel_id)
     db.session.delete(channel)
     db.session.commit()
     return {"message": f"channel {channel.channel_name} has been deleted from server {channel.server.server_name}"}
