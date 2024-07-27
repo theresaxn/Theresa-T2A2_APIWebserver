@@ -55,7 +55,6 @@ def create_server():
         user_id = get_jwt_identity(),
         is_admin = True
     )
-
     db.session.add(new_member)
     db.session.commit()
     return server_schema.dump(new_server)
@@ -65,8 +64,7 @@ def create_server():
 @jwt_required()
 def update_server(server_id):
     body_data = server_schema.load(request.get_json())
-    stmt = db.select(Server).filter_by(server_id=server_id)
-    server = db.session.scalar(stmt)
+    server = Server.query.get(server_id)
     if not server:
         return {"error": f"server with id {server_id} not found"}, 404
     else:
@@ -80,8 +78,7 @@ def update_server(server_id):
 @server_bp.route("/delete/<int:server_id>", methods=["DELETE"])
 @jwt_required()
 def delete_server(server_id):
-    stmt = db.select(Server).filter_by(server_id=server_id)
-    server = db.session.scalar(stmt)
+    server = Server.query.get(server_id)
     if not server:
         return {"error": f"server with id {server_id} not found"}, 404
     else:
