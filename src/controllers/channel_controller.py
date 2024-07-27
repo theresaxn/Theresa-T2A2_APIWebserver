@@ -2,6 +2,8 @@ from datetime import date
 
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
 
 from main import db
 from utils import current_member, auth_as_admin, channel_exist
@@ -39,16 +41,20 @@ def view_one_channel(server_id, channel_id):
 @current_member("server_id")
 @auth_as_admin("server_id")
 def create_channel(server_id):
-    body_data = channel_schema.load(request.get_json())
-    new_channel = Channel(
-        channel_name = body_data.get("channel_name"),
-        created_on = date.today(),
-        creator_user_id = get_jwt_identity(),
-        server_id = server_id
-    )
-    db.session.add(new_channel)
-    db.session.commit()
-    return channel_schema.dump(new_channel)
+    try:
+        body_data = channel_schema.load(request.get_json())
+        new_channel = Channel(
+            channel_name = body_data.get("channel_name"),
+            created_on = date.today(),
+            creator_user_id = get_jwt_identity(),
+            server_id = server_id
+        )
+        db.session.add(new_channel)
+        db.session.commit()
+        return channel_schema.dump(new_channel)
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
 # Update channel - PATCH, PUT - server/<int:server_id>/channel/update/<int:channel_id>
 @channel_bp.route("/update/<int:channel_id>", methods=["PUT", "PATCH"])

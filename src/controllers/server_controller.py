@@ -2,6 +2,8 @@ from datetime import date
 
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
 
 from main import db
 from models.user import User
@@ -40,25 +42,29 @@ def view_one_server(server_id):
 @server_bp.route("/create", methods=["POST"])
 @jwt_required()
 def create_server():
-    body_data = server_schema.load(request.get_json())
-    new_server = Server(
-        server_name = body_data.get("server_name"),
-        created_on = date.today(),
-        creator_user_id = get_jwt_identity()
-    )
-    db.session.add(new_server)
-    db.session.commit()
+    try: 
+        body_data = server_schema.load(request.get_json())
+        new_server = Server(
+            server_name = body_data.get("server_name"),
+            created_on = date.today(),
+            creator_user_id = get_jwt_identity()
+        )
+        db.session.add(new_server)
+        db.session.commit()
 
-    new_member = ServerMember(
-        joined_on = date.today(),
-        server_id = new_server.server_id,
-        user_id = get_jwt_identity(),
-        is_admin = True
-    )
-    db.session.add(new_member)
-    db.session.commit()
-    return server_schema.dump(new_server)
-
+        new_member = ServerMember(
+            joined_on = date.today(),
+            server_id = new_server.server_id,
+            user_id = get_jwt_identity(),
+            is_admin = True
+        )
+        db.session.add(new_member)
+        db.session.commit()
+        return server_schema.dump(new_server)
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"error": f"{err.orig.diag.column_name} is required"}, 409
+        
 # Update server - PATCH, PUT - server/update/<int:server_id>
 @server_bp.route("/update/<int:server_id>", methods=["PUT", "PATCH"])
 @jwt_required()

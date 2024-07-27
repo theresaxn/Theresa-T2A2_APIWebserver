@@ -25,7 +25,6 @@ class ServerSchema(ma.Schema):
 
     class Meta:
         fields = ("server_id", "server_name", "created_on", "user", "server_members", "channels")
-        ordered = True
 
 server_schema = ServerSchema()
 servers_schema = ServerSchema(many=True)

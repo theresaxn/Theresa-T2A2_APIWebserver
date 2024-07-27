@@ -2,6 +2,9 @@ import datetime
 
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
+
 from main import db
 from utils import current_member_check, message_exist, channel_message_exist
 from models.user import User
@@ -43,37 +46,45 @@ def view_one_channel_message(channel_id, message_id):
 @message_user_bp.route("/send/<int:user_id>", methods=["POST"])
 @jwt_required()
 def send_direct_message(user_id):
-    body_data = message_schema.load(request.get_json())
-    user = User.query.get(user_id)
-    if not user:
-        return {"error": f"user with id {user_id} not found"}, 404
-    else:
-        new_message = Message(
-            content = body_data.get("content"),
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            sender_user_id = get_jwt_identity(),
-            receiver_user_id = user_id
-        )
-    db.session.add(new_message)
-    db.session.commit()
-    return message_schema.dump(new_message)
+    try:
+        body_data = message_schema.load(request.get_json())
+        user = User.query.get(user_id)
+        if not user:
+            return {"error": f"user with id {user_id} not found"}, 404
+        else:
+            new_message = Message(
+                content = body_data.get("content"),
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                sender_user_id = get_jwt_identity(),
+                receiver_user_id = user_id
+            )
+        db.session.add(new_message)
+        db.session.commit()
+        return message_schema.dump(new_message)
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
 # Post channel message - POST - channel/<int:channel_id>/message/post
 @message_channel_bp.route("/post", methods=["POST"])
 @jwt_required()
 @current_member_check("channel_id")
 def add_channel_message(channel_id):
-    body_data = message_schema.load(request.get_json())
-    new_message = Message(
-        title = body_data.get("title"),
-        content = body_data.get("content"),
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        channel_id = channel_id,
-        sender_user_id = get_jwt_identity()
-    )
-    db.session.add(new_message)
-    db.session.commit()
-    return message_schema.dump(new_message)
+    try:
+        body_data = message_schema.load(request.get_json())
+        new_message = Message(
+            title = body_data.get("title"),
+            content = body_data.get("content"),
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            channel_id = channel_id,
+            sender_user_id = get_jwt_identity()
+        )
+        db.session.add(new_message)
+        db.session.commit()
+        return message_schema.dump(new_message)
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"error": f"{err.orig.diag.column_name} is required"}, 409
 
 # Update message - PUT, PATCH - message/update/<int:message_id>
 @message_bp.route("/update/<int:message_id>", methods=["PUT", "PATCH"])
