@@ -16,11 +16,11 @@ class ServerMember(db.Model):
     user = db.relationship("User", back_populates="server_members")
 
 class ServerMemberSchema(ma.Schema):
-    server = fields.Nested("ServerSchema", exclude=["server_members"])
+    server = fields.Nested("ServerSchema", only=["server_id", "server_name"])
     user = fields.Nested("UserSchema", only=["user_id", "username"])
 
     class Meta:
         fields = ("member_id", "joined_on", "is_admin", "server", "user")
-    
+
 server_member_schema = ServerMemberSchema()
 server_members_schema = ServerMemberSchema(many=True)

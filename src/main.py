@@ -39,4 +39,7 @@ def create_app():
     from controllers.server_controller import server_bp
     app.register_blueprint(server_bp)
     
+    from controllers.server_member_controller import member_bp
+    app.register_blueprint(member_bp)
+
     return app
