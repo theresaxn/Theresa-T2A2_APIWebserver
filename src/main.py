@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from marshmallow.exceptions import ValidationError
 
+
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
@@ -35,14 +36,19 @@ def create_app():
 
     from controllers.user_controller import user_bp
     app.register_blueprint(user_bp)
-    
+
     from controllers.server_controller import server_bp
     app.register_blueprint(server_bp)
-    
+
     from controllers.server_member_controller import member_bp
     app.register_blueprint(member_bp)
 
     from controllers.channel_controller import channel_bp
     app.register_blueprint(channel_bp)
+
+    from controllers.message_controller import message_bp, message_user_bp, message_channel_bp
+    app.register_blueprint(message_bp)
+    app.register_blueprint(message_user_bp)
+    app.register_blueprint(message_channel_bp)
 
     return app
