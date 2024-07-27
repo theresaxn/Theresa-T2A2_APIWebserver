@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 
 from main import db, bcrypt
-from models.user import User, UserSchema, user_schema, users_schema
+from models.user import User, UserSchema, user_schema
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
