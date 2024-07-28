@@ -339,6 +339,8 @@ class Channel(db.Model):
     messages = db.relationship("Message", back_populates="channel", cascade="all, delete")
 ```
 
+</details>
+
 Example Queries:
 
 From ```channel = Channel.query.get(channel_id)```:
@@ -347,8 +349,6 @@ From ```channel = Channel.query.get(channel_id)```:
     ```
     messages_in_channel = server.channels
     ```
-
-</details>
 
 ### Messages Model
 
