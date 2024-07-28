@@ -7,6 +7,7 @@ from models.server_member import ServerMember
 from models.channel import Channel
 from models.message import Message
 
+# Check if user is existing member of server using server_id
 def current_member(id_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -22,6 +23,7 @@ def current_member(id_arg_name):
         return wrapper
     return decorator
 
+# Check if user is admin in server
 def auth_as_admin (id_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -35,6 +37,7 @@ def auth_as_admin (id_arg_name):
         return wrapper
     return decorator
 
+# Check if user exists as a member in server
 def member_exist(id1_arg_name, id2_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -47,13 +50,14 @@ def member_exist(id1_arg_name, id2_arg_name):
                 return {"error": f"server with id {server_id} not found"}, 404
             if not server_member:
                 return {"error": f"member with id {member_id} not found"}, 404
-            member_filter = ServerMember.query.filter_by(server=server, member_id=member_id).first()
+            member_filter = ServerMember.query.filter_by(server_id=server_id, member_id=member_id).first()
             if not member_filter:
                 return {"error": f"member with id {member_id} not found in server {server.server_name}"}, 404
             return fn(*args, **kwargs)
         return wrapper
     return decorator
 
+# Check if channel exists in server
 def channel_exist(id1_arg_name, id2_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -73,6 +77,7 @@ def channel_exist(id1_arg_name, id2_arg_name):
         return wrapper
     return decorator
 
+# Check if message exusts in channel 
 def channel_message_exist(id1_arg_name, id2_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -92,6 +97,7 @@ def channel_message_exist(id1_arg_name, id2_arg_name):
         return wrapper
     return decorator
 
+# Check if message exists
 def message_exist(id1_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
@@ -107,6 +113,7 @@ def message_exist(id1_arg_name):
         return wrapper
     return decorator
 
+# Check if user is existing member of server using channel_id
 def current_member_check(id_arg_name):
     def decorator(fn):
         @functools.wraps(fn)
