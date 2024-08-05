@@ -6,7 +6,7 @@
 
 ## R1: Purpose
 
-There are challenges with commication within online communities due to fragmented communication channels. Since many communities use various messaging platforms, this can lead to difficulty in difficulty tracking discussions and reduced engagement. This Communication API is designed to address this issue by providing a unified platform that facilitates real-communication through channels and direct messaging. Users can create and manage multiple servers and channels that can be dedicated to specific topics or interests.
+There are challenges with commication within online communities due to fragmented communication channels. Since many communities use various messaging platforms, this can lead to difficulty in tracking discussions and reduced engagement. This Communication API is designed to address this issue by providing a unified platform that facilitates real-communication through channels and direct messaging. Users can create and manage multiple servers and channels that can be dedicated to specific topics or interests.
 
 ## R2: Task Allocation & Tracking Progress
 
@@ -347,7 +347,7 @@ From ```channel = Channel.query.get(channel_id)```:
 
 - Get all messages in a channel
     ```
-    messages_in_channel = server.channels
+    messages_in_channel = channel.messages
     ```
 
 ### Messages Model
