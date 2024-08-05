@@ -37,11 +37,11 @@ The third party libraries used in my app includes:
 
 - flask_sqlalchemy: An extension of Flask that simplifies SQLAlchemy, which is an ORM tool used to help access and manage SQL databases using Python language. Within the app, it is used to define models and manage of database sessions and perform CRUD operations  
 
-- flask_marshmallow: An integration layer for Flask and Marshmallow, which is a tool used for de/serialisation of data (conversion of complex data types such as SQLAlchemy models to and from JSON format). Within the app, it also validates input data such as password complexities and server/channel name length ```server_name = fields.String(validate=Length(min=5, error="must be at least 5 characters long"))```  
+- flask_marshmallow: An integration layer for Flask and Marshmallow, which is a tool used for de/serialisation of data (conversion of complex data types such as SQLAlchemy models to and from JSON format). Within the app, it also validates input data such as password complexities and server/channel name length, for example: ```server_name = fields.String(validate=Length(min=5, error="must be at least 5 characters long"))```  
 
 - marshmallow_sqlalchemy: An extension of Marshmallow that adds support to the de/serialisation of SQLAlchemy models  
 
-- flask_bcrypt: An extension of Flask that provides brcypt hashing, essential for authentication. Within the app, it is used for hashing passwords ```user.password = bcrypt.generate_password_hash(password).decode("utf-8")``` and checking password hashes against plain-text passwords ```bcrypt.check_password_hash(user.password, body_data.get("password")```  
+- flask_bcrypt: An extension of Flask that provides brcypt hashing, essential for authentication. Within the app, it is used for hashing passwords, for example: ```user.password = bcrypt.generate_password_hash(password).decode("utf-8")``` and checking password hashes against plain-text passwords, for example: ```bcrypt.check_password_hash(user.password, body_data.get("password")```  
 
 - flask_jwt_extended: An extension of Flask that handles authentication and authorisation using a JWT tokens. Within the app, JWT tokens are created by ```create_access_token``` and set to expire within a day using ```expires_delta```. Users are then authenicated using the ```jwt_required``` decorator
 
